@@ -12,11 +12,11 @@ app.use(express.json());
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.cez8utx.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri)
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 async function run() {
     try {
         const serviceCollection = client.db('perfect-engineering').collection('services');
+        const commentCollection = client.db('perfect-engineering').collection('comments');
         app.get('/services', async (req, res) => {
             const query = {};
             const cursor = serviceCollection.find(query);
@@ -38,6 +38,14 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const service = await serviceCollection.findOne(query);
             res.send(service);
+        });
+
+
+
+        app.post('/comments', async (req, res) => {
+            const comment=req.body;
+            const result = await commentCollection.insertOne(comment);
+            res.send(result);
         });
     }
     finally {

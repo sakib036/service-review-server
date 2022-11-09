@@ -41,12 +41,35 @@ async function run() {
         });
 
 
+        app.get('/comments', async (req, res) => {
+            let query = {};
+            if(req.query.email){
+                query={
+                    email:req.query.email
+                }
+            }
+            const cursor = commentCollection.find(query);
+            const services = await cursor.toArray();
+            res.send(services);
+        });
+
 
         app.post('/comments', async (req, res) => {
             const comment=req.body;
             const result = await commentCollection.insertOne(comment);
             res.send(result);
         });
+
+
+        app.delete('/comments/:id',async(req,res)=>{
+            const id=req.params.id;
+           
+            const query={_id:ObjectId(id)}
+            const result=await commentCollection.deleteOne(query);
+            console.log(result)
+            res.send(result);
+    
+          });
     }
     finally {
 

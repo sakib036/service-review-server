@@ -59,6 +59,29 @@ async function run() {
             const comment = await cursor.toArray();
             res.send(comment);
         });
+
+        app.get('/comments/newComment/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const comment = await commentCollection.findOne(query);
+            res.send(comment);
+        });
+
+        app.put('/comments/newComment/:id', async(req, res)=>{
+            const id=req.params.id;
+            const filter={_id:ObjectId(id)};
+            const newComment=req.body;
+           
+            const option={upsert:true};
+            const updateComment={
+              $set:{
+                comment:newComment.comment,
+              }
+            }
+           
+            const result=await commentCollection.updateOne(filter, updateComment, option);
+            res.send(result);
+          })
        
 
 

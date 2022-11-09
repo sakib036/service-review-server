@@ -27,7 +27,7 @@ async function run() {
 
         app.get('/home/services', async (req, res) => {
             const query = {};
-            const cursor = serviceCollection.find(query).limit(3);
+            const cursor = serviceCollection.find(query).limit(3).sort({"_id":-1});
             const services = await cursor.toArray();
             res.send(services);
         });
@@ -41,6 +41,13 @@ async function run() {
         });
 
 
+        app.post('/services',async(req,res)=>{
+            const service=req.body;
+            const result=await serviceCollection.insertOne(service);
+            res.send(result);
+          });
+
+
         app.get('/comments', async (req, res) => {
             let query = {};
             if(req.query.email){
@@ -49,15 +56,34 @@ async function run() {
                 }
             }
             const cursor = commentCollection.find(query);
-            const services = await cursor.toArray();
-            res.send(services);
+            const comment = await cursor.toArray();
+            res.send(comment);
         });
+       
 
 
         app.post('/comments', async (req, res) => {
             const comment=req.body;
             const result = await commentCollection.insertOne(comment);
             res.send(result);
+        });
+
+
+
+
+        app.get('/comments/:service', async (req, res) => {
+        //    const service=(req.params.service);
+            let query = {};
+        
+            if (req.params.service){
+                query={
+                    service:req.params.service
+                }
+            } 
+           
+            const cursor = commentCollection.find(query).sort({"_id":-1});
+            const comment = await cursor.toArray();
+            res.send(comment);
         });
 
 
@@ -85,5 +111,5 @@ app.get('/', (req, res) => {
 
 
 app.listen(port, () => {
-    console.log(`node-mongo server running on port ${port}`);
+    console.log(`perfect-engineering server running on port ${port}`);
 })

@@ -82,6 +82,7 @@ async function run() {
 
         app.get('/comments', verifyJWT, async (req, res) => {
             const decoded=req.decoded;
+            
             if(decoded.email !==req.query.email){
                 req.status(403).send({message:'Forbidden access'})
             }
@@ -90,6 +91,7 @@ async function run() {
                 query={
                     email:req.query.email
                 }
+               
             }
             const cursor = commentCollection.find(query);
             const comment = await cursor.toArray();
